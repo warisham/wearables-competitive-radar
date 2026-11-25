@@ -15,7 +15,7 @@ Competitive updates in digital health are scattered across FDA letters, CMS rule
 | View | What it does |
 | --- | --- |
 | **Market feed** | Update cards, newest first. Each has a "why it matters" line and a source. Filter by company and type (Regulatory, Reimbursement, Product, Funding), or search. |
-| **Battlecards** | A sales playbook for Apple, Samsung, Oura, WHOOP, Dexcom and Abbott: positioning, strengths, gaps, how to win, one question to ask the buyer, and the latest move. |
+| **Battlecards** | A sales playbook for Apple, Samsung, Oura, WHOOP, Dexcom and Senseonics: positioning, strengths, gaps, how to win, one question to ask the buyer, and the latest move. |
 | **Positioning map** | A 2x2 of consumer wellness vs clinical grade against single device vs care platform, with each player shown by product and the open space marked. |
 | **Leadership brief** | An auto-written summary for the last 30 or 90 days, 12 months, or all time, ready to paste into email or Slack. |
 
@@ -28,7 +28,7 @@ The seed data includes:
 - The WHOOP warning letter (July 2025) and its reversal (June 2026)
 - CMS's new RPM codes for 2026 (99445, 99470) and the 2027 revaluation
 - Oura's IPO filing
-- Consumer CGM clearances (Dexcom Stelo, Abbott Lingo)
+- CGM clearances: Dexcom Stelo (over the counter) and Senseonics Eversense 365 (one-year implant)
 - Cleared smartwatch features from Apple and Samsung
 
 Entries with a source link go to the report used. Entries marked **Add link** came from company announcements and need a link added before you share them.

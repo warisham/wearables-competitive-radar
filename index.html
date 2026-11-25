@@ -6,6 +6,16 @@
 <title>Wearables Competitive Radar</title>
 <meta name="description" content="Competitive intelligence for the consumer-to-clinical wearables market: market feed, sales battlecards, positioning map and leadership brief.">
 <meta name="theme-color" content="#0B1220">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://warisham.github.io/wearables-competitive-radar/">
+<meta property="og:title" content="Competitive Radar: Consumer Health Wearables">
+<meta property="og:description" content="Market feed, sales battlecards, a positioning map and a leadership brief for the consumer-to-clinical wearables market.">
+<meta property="og:image" content="https://warisham.github.io/wearables-competitive-radar/img/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="Competitive Radar app showing KPI tiles and product battlecards">
+<meta name="author" content="Warisha Khan">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -249,7 +259,7 @@ footer .shell { display: grid; gap: 4px; }
 
   const COMPANIES = {
     Apple:   { color:"#5B6B82" }, Samsung: { color:"#1F6FEB" }, Oura: { color:"#B07A16" },
-    WHOOP:   { color:"#C2352B" }, Dexcom:  { color:"#12805A" }, Abbott: { color:"#0F8C8C" },
+    WHOOP:   { color:"#C2352B" }, Dexcom:  { color:"#12805A" }, Senseonics: { color:"#0F8C8C" },
     "FDA / CMS": { color:"#8A5CD1" }
   };
   const TYPES = ["Regulatory","Reimbursement","Product","Funding"];
@@ -287,10 +297,10 @@ footer .shell { display: grid; gap: 4px; }
       sum:"First over-the-counter hearing aid software on a consumer earbud.",
       so:"Shows Apple's pattern: turn a mass-market device into a regulated health product through software.",
       url:"", src:"Apple and FDA announcements" },
-    { d:"2024-06-10", co:"Abbott", type:"Regulatory", title:"FDA clears Lingo over-the-counter glucose biosensor",
-      sum:"Abbott's consumer CGM for people not on insulin, sold without a prescription.",
-      so:"Glucose joins the consumer wellness stack. Partnerships with CGM makers become a route to metabolic health use cases.",
-      url:"", src:"Abbott announcement" },
+    { d:"2024-09-17", co:"Senseonics", type:"Regulatory", title:"FDA clears Eversense 365, the first one-year CGM",
+      sum:"Senseonics' implantable sensor needs to be replaced only once a year, and it was cleared as an integrated CGM that can connect to compatible insulin pumps.",
+      so:"A year-long implant is a different wear model from 10- to 15-day patches. Pairing it with daily activity and sleep data from a wearable is a partnership opening for metabolic programs.",
+      url:"https://www.fiercebiotech.com/medtech/fda-clears-senseonics-365-day-eversense-cgm-implant", src:"Fierce Biotech" },
     { d:"2024-03-05", co:"Dexcom", type:"Regulatory", title:"FDA clears Stelo, the first over-the-counter CGM",
       sum:"Stelo is cleared for adults with type 2 diabetes not on insulin, without a prescription.",
       so:"Dexcom is moving from prescription channels to consumers, and integrates with third-party wearables data.",
@@ -322,25 +332,24 @@ footer .shell { display: grid; gap: 4px; }
       str:["Clinical-grade glucose data and payer coverage","Stelo opens the consumer channel","Deep endocrinology relationships"],
       gaps:["Single biomarker; relies on partners for activity and sleep","Sensor replacement costs"],
       win:"Treat as a partner more than a rival: combined glucose, activity and sleep data makes a stronger metabolic program.", q:"Would a combined CGM and wearable view help your diabetes program?" },
-    Abbott: { pos:"Libre CGM scale leader with the Lingo consumer biosensor.",
-      str:["Largest CGM user base worldwide","Low-cost sensors","Strong hospital and cardiology relationships"],
-      gaps:["Consumer app ecosystem is young","Glucose-centric; limited broader wearable data"],
-      win:"Same as Dexcom: lead with integration and a combined metabolic view.", q:"Which CGM do your patients already use?" }
+    Senseonics: { pos:"Implantable CGM maker; Eversense 365 lasts a full year on one sensor.",
+      str:["The only implantable CGM, with one sensor insertion a year","Integrates with insulin pumps, starting with twiist","Fast revenue growth since taking sales in-house in 2026"],
+      gaps:["A clinician has to insert and remove the sensor","Still needs an on-body transmitter until Gemini and Freedom launch","Single biomarker and a small installed base next to patch CGMs"],
+      win:"Treat as a partner more than a rival: year-long glucose data plus daily activity and sleep makes a stronger metabolic program with less patient burden.", q:"Which patients in your program would choose an implant over a patch, and who would place it?" }
   };
   // Analyst view: x 0 = consumer wellness, 1 = clinical grade; y 0 = single device, 1 = care platform
-  const MAP = { Apple:[0.62,0.72], Samsung:[0.5,0.48], Oura:[0.28,0.55], WHOOP:[0.18,0.38], Dexcom:[0.86,0.42], Abbott:[0.8,0.3] };
+  const MAP = { Apple:[0.62,0.72], Samsung:[0.5,0.48], Oura:[0.28,0.55], WHOOP:[0.18,0.38], Dexcom:[0.86,0.42], Senseonics:[0.74,0.24] };
 
   // Brighter brand colors for the dark theme, and illustrative product images
   Object.assign(COMPANIES.Apple, { color: "#94A3B8", img: "watch" });
   Object.assign(COMPANIES.Samsung, { color: "#3B82F6", img: "round-watch" });
   Object.assign(COMPANIES.Oura, { color: "#E0A93B", img: "ring" });
   Object.assign(COMPANIES.WHOOP, { color: "#EF4444", img: "band" });
-  Object.assign(COMPANIES.Dexcom, { color: "#22C55E", img: "cgm-arm" });
-  Object.assign(COMPANIES.Abbott, { color: "#14B8A6", img: "cgm-disc" });
+  Object.assign(COMPANIES.Dexcom, { color: "#22C55E", img: "cgm-disc" });
+  Object.assign(COMPANIES.Senseonics, { color: "#14B8A6", img: "cgm-arm" });
   COMPANIES["FDA / CMS"].color = "#A78BFA";
-  MAP.Abbott = [0.74, 0.24]; // nudged from [0.8, 0.3] so it does not cover Dexcom on the map
-  const PARTNERS = new Set(["Dexcom", "Abbott"]);
-  const IMG_ALT = { watch: "square smartwatch", "round-watch": "round smartwatch", ring: "smart ring", band: "screenless fitness band", "cgm-arm": "glucose sensor worn on the arm", "cgm-disc": "glucose biosensor with phone app" };
+  const PARTNERS = new Set(["Dexcom", "Senseonics"]);
+  const IMG_ALT = { watch: "square smartwatch", "round-watch": "round smartwatch", ring: "smart ring", band: "screenless fitness band", "cgm-arm": "glucose sensor transmitter worn on the arm", "cgm-disc": "round glucose sensor with phone app" };
   const tagStyle = c => `background:${c}2e;color:${c}`;
 
   // ---------- State ----------
