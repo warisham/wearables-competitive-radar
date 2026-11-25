@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wearables Competitive Radar</title>
+<meta name="description" content="Competitive intelligence for the consumer-to-clinical wearables market: market feed, sales battlecards, positioning map and leadership brief.">
+<meta name="theme-color" content="#0B1220">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1220; --surface: #131C2E; --surface-2: #0F172A; --line: #24324A;
+  --ink: #F2F5FA; --soft: #CBD5E1; --muted: #9AA8BD;
+  --accent: #3B82F6; --accent-2: #60A5FA;
+  --good: #4ADE80; --bad: #F87171;
+  --radius: 20px;
+  --font: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3 { letter-spacing: -0.02em; text-wrap: balance; }
+a { color: var(--accent-2); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.shell { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* Top bar */
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(11, 18, 32, .88); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(36, 50, 74, .6); }
+.topbar .shell { display: flex; align-items: center; gap: 16px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; white-space: nowrap; }
+.brand-mark { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #22C55E); flex: none; }
+.tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { border: 0; background: var(--surface); color: var(--muted); padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: 14px; white-space: nowrap; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--accent); color: #fff; }
+.btn { border: 0; border-radius: 999px; padding: 10px 18px; font-weight: 600; font-size: 14px; background: var(--surface); color: var(--ink); white-space: nowrap; }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.1); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 32px; align-items: center; padding: 40px 0 28px; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-2); }
+.hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; font-weight: 700; margin: 14px 0 26px; max-width: 18ch; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.kpi { border-radius: var(--radius); padding: 20px 22px; color: #fff; }
+.kpi:nth-child(1) { background: linear-gradient(135deg, #2563EB, #1E40AF); }
+.kpi:nth-child(2) { background: linear-gradient(135deg, #0D9488, #115E59); }
+.kpi:nth-child(3) { background: linear-gradient(135deg, #7C3AED, #5B21B6); }
+.kpi .value { font-size: 42px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.kpi .label { font-weight: 600; margin-top: 6px; }
+.kpi .sub { font-size: 13px; color: #DBE6FF; margin-top: 2px; }
+.hero-img { border-radius: 28px; overflow: hidden; aspect-ratio: 5 / 4; background: #0A1A3A; box-shadow: 0 30px 80px rgba(37, 99, 235, .25); }
+.hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Filters */
+.filters { display: grid; gap: 12px; padding: 4px 0 24px; }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filter-row .lbl { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); width: 72px; flex: none; }
+.search { background: var(--surface); border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 10px 16px; font: inherit; font-size: 14px; width: min(360px, 100%); }
+.search::placeholder { color: var(--muted); }
+.chip { position: relative; display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; border: 1px solid transparent; transition: opacity .15s; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip .n { font-weight: 500; opacity: .7; font-variant-numeric: tabular-nums; }
+.chip:has(input:not(:checked)) { opacity: .38; background: transparent !important; border-color: var(--line); }
+.chip:has(input:focus-visible) { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* Shared */
+.section-title { font-size: 26px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tag { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.tag.neutral { background: rgba(148, 163, 184, .16); color: #CBD5E1; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.empty { color: var(--muted); padding: 24px 0; }
+main { padding-bottom: 40px; min-height: 40vh; }
+
+/* Feed */
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 18px; }
+.update { padding: 22px 24px; display: grid; gap: 12px; align-content: start; }
+.update .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.update .date { font-size: 13px; color: var(--muted); font-weight: 500; }
+.update h3 { font-size: 18px; line-height: 1.35; font-weight: 600; }
+.update .sum { font-size: 14px; color: var(--soft); }
+.why { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 14px; color: var(--soft); }
+.why b, .box b { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.why b { color: var(--accent-2); }
+.src { font-size: 12.5px; color: var(--muted); }
+.warn-tag { background: rgba(224, 169, 59, .16); color: #E0A93B; padding: 1px 8px; border-radius: 999px; font-weight: 600; margin-left: 4px; }
+
+/* Battlecards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 20px; align-items: stretch; }
+.bc { overflow: hidden; display: flex; flex-direction: column; }
+.bc-img { aspect-ratio: 16 / 9; background: #1E2A40; }
+.bc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bc-body { padding: 18px 22px 24px; display: grid; gap: 12px; align-content: start; flex: 1; }
+.bc-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bc-title h3 { font-size: 24px; font-weight: 700; }
+.bc-pos { color: var(--soft); font-size: 15px; }
+.box { border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+.box ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; color: var(--soft); }
+.box li { display: grid; grid-template-columns: 14px 1fr; gap: 6px; }
+.box li::before { font-weight: 700; }
+.box.str { background: rgba(74, 222, 128, .09); } .box.str b, .box.str li::before { color: var(--good); } .box.str li::before { content: "+"; }
+.box.gap { background: rgba(248, 113, 113, .09); } .box.gap b, .box.gap li::before { color: var(--bad); } .box.gap li::before { content: "–"; }
+.box.win { background: rgba(59, 130, 246, .14); color: var(--ink); font-weight: 500; } .box.win b { color: var(--accent-2); }
+.box.ask { color: var(--ink); font-weight: 600; font-size: 15px; }
+.latest { font-size: 12.5px; color: var(--muted); }
+
+/* Map */
+.map-card { padding: 24px; }
+.map-note { color: var(--soft); font-size: 14px; max-width: 70ch; margin-bottom: 16px; }
+.plot { position: relative; aspect-ratio: 2 / 1; min-height: 340px; border-radius: 16px; background: var(--surface-2); overflow: hidden; }
+.plot .axis-v, .plot .axis-h { position: absolute; background: var(--line); }
+.plot .axis-v { left: 50%; top: 6%; bottom: 6%; width: 2px; }
+.plot .axis-h { top: 50%; left: 4%; right: 4%; height: 2px; }
+.plot .lab { position: absolute; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.plot .quad { position: absolute; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #5B6B85; }
+.open { position: absolute; left: 68%; top: 5%; width: 29%; height: 30%; border: 2px dashed rgba(34, 197, 94, .55); background: rgba(34, 197, 94, .1); border-radius: 16px; padding: 14px 16px; }
+.open strong { display: block; color: var(--good); font-size: clamp(15px, 1.8vw, 22px); }
+.open span { color: #86EFAC; font-size: 13px; }
+.xaxis { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.pt { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; }
+.pt .th { width: clamp(44px, 6.5vw, 80px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 3px solid; background: #1E2A40; }
+.pt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pt span { font-size: 13px; font-weight: 700; text-shadow: 0 1px 6px #000; white-space: nowrap; }
+
+/* Brief */
+.brief { padding: 24px; display: grid; gap: 16px; }
+.seg { display: inline-flex; gap: 2px; background: var(--surface-2); border-radius: 999px; padding: 4px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.brief pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 14px/1.65 var(--font); background: var(--surface-2); color: var(--soft); border-radius: 14px; padding: 18px 20px; margin: 0; max-width: 85ch; }
+
+/* Dialog */
+dialog { border: 1px solid var(--line); border-radius: 20px; padding: 0; width: min(560px, calc(100% - 32px)); background: var(--surface); color: var(--ink); }
+dialog::backdrop { background: rgba(3, 7, 15, .65); }
+dialog form { padding: 24px; display: grid; gap: 12px; }
+dialog h2 { font-size: 20px; }
+dialog label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; color: var(--soft); }
+dialog input, dialog select, dialog textarea { width: 100%; font: 14px/1.4 var(--font); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+dialog textarea { resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+footer { border-top: 1px solid var(--line); padding: 22px 0 36px; font-size: 12.5px; color: var(--muted); }
+footer .shell { display: grid; gap: 4px; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding-top: 28px; }
+  .hero-img { max-width: 520px; aspect-ratio: 16 / 10; }
+  .plot { aspect-ratio: 4 / 3; }
+  .plot .quad { display: none; }
+}
+@media (max-width: 600px) {
+  .shell { padding: 0 16px; }
+  .kpis { grid-template-columns: 1fr; }
+  .kpi { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; align-items: center; padding: 14px 18px; }
+  .kpi .value { grid-row: span 2; font-size: 34px; }
+  .kpi .label { margin-top: 0; }
+  .filter-row .lbl { width: 100%; }
+  .plot { aspect-ratio: auto; height: 480px; min-height: 0; }
+  .open { left: 52%; width: 45%; height: auto; padding: 8px 10px; }
+  .open strong { font-size: 15px; }
+  .open span { font-size: 11.5px; }
+  .open .long { display: none; }
+  .map-card { padding: 16px 12px; }
+  .pt span { font-size: 11.5px; }
+  .row2 { grid-template-columns: 1fr; }
+  .topbar .tabs { order: 3; flex-basis: 100%; }
+  .topbar .shell { gap: 10px; }
+  .brand { font-size: 16px; }
+  .btn.primary#add { padding: 9px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="shell">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Competitive Radar</div>
+    <nav class="tabs" role="tablist" aria-label="View">
+      <button role="tab" data-tab="feed" aria-selected="true">Market feed</button>
+      <button role="tab" data-tab="cards" aria-selected="false">Battlecards</button>
+      <button role="tab" data-tab="map" aria-selected="false">Positioning map</button>
+      <button role="tab" data-tab="brief" aria-selected="false">Leadership brief</button>
+    </nav>
+    <button class="btn primary" id="add">Add update</button>
+  </div>
+</header>
+
+<div class="shell">
+  <section class="hero" aria-label="Summary">
+    <div>
+      <p class="eyebrow">Consumer health wearables · <span id="asof"></span></p>
+      <h1>Know every move in the consumer-to-clinical wearables market.</h1>
+      <div class="kpis" id="kpis"></div>
+    </div>
+    <div class="hero-img"><img src="img/hero-watch.jpg" width="960" height="768" alt="Illustrative smartwatch showing heart rate and activity rings"></div>
+  </section>
+
+  <section class="filters" aria-label="Filters">
+    <div class="filter-row"><label class="sr-only" for="q">Search updates</label><input type="search" id="q" class="search" placeholder="Search updates"></div>
+    <div class="filter-row"><span class="lbl">Company</span><div class="filter-row" id="f-co"></div></div>
+    <div class="filter-row"><span class="lbl">Type</span><div class="filter-row" id="f-type"></div></div>
+  </section>
+
+  <main id="view" aria-live="polite"></main>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <form id="addform">
+    <h2 id="dlg-title">Add a market update</h2>
+    <div class="row2">
+      <div><label for="n-date">Date</label><input type="date" id="n-date" required></div>
+      <div><label for="n-co">Company</label><select id="n-co"></select></div>
+    </div>
+    <div><label for="n-type">Type</label><select id="n-type"></select></div>
+    <div><label for="n-title">Headline</label><input type="text" id="n-title" required></div>
+    <div><label for="n-sum">What happened</label><textarea id="n-sum" rows="2"></textarea></div>
+    <div><label for="n-so">Why it matters to us</label><textarea id="n-so" rows="2"></textarea></div>
+    <div><label for="n-url">Source link</label><input type="text" id="n-url" placeholder="https://"></div>
+    <div class="actions"><button type="button" class="btn" id="cancel">Cancel</button><button type="submit" class="btn primary">Add update</button></div>
+  </form>
+</dialog>
+
+<footer>
+  <div class="shell">
+    <p>Portfolio demo. Seed entries reflect public reports as of November 2026; entries without a link were added from company announcements and should be checked against the original release before use.</p>
+    <p>Battlecards and map positions are an analyst view, written to be edited for your own context. Product images are illustrative AI renders, not the companies' actual products.</p>
+    <p>Built by Warisha Khan · <a href="https://github.com/warisham">github.com/warisham</a></p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+  const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 2200); };
+
+  const TODAY = new Date("2026-11-21T00:00:00");
+
+  const COMPANIES = {
+    Apple:   { color:"#5B6B82" }, Samsung: { color:"#1F6FEB" }, Oura: { color:"#B07A16" },
+    WHOOP:   { color:"#C2352B" }, Dexcom:  { color:"#12805A" }, Abbott: { color:"#0F8C8C" },
+    "FDA / CMS": { color:"#8A5CD1" }
+  };
+  const TYPES = ["Regulatory","Reimbursement","Product","Funding"];
+
+  let EVENTS = [
+    { d:"2026-11-01", co:"FDA / CMS", type:"Reimbursement", title:"CMS finalizes 2027 changes to RPM device supply valuations",
+      sum:"The CY2027 Physician Fee Schedule final rule revises practice expense values for RPM setup and device supply codes, including 99445, 99453 and 99454.",
+      so:"Device supply pays for the hardware in RPM programs. Lower rates favor programs built on wearables patients already own over shipped kits.",
+      url:"https://www.nixonpeabody.com/-/media/files/alerts/2026/11/cms_finalizes_2027_medicare_rpm_rtm_changes.pdf", src:"Nixon Peabody" },
+    { d:"2026-09-21", co:"Oura", type:"Funding", title:"Oura files to go public, reportedly seeking up to $2.2B",
+      sum:"The smart ring maker filed for an IPO as it adds health features and paid members. Later reports said the timing slipped.",
+      so:"Public capital would fund clinical features and enterprise sales. Expect sharper competition for health system and employer partnerships.",
+      url:"https://www.medtechdive.com/topic/digital-health/", src:"MedTech Dive" },
+    { d:"2026-06-15", co:"WHOOP", type:"Regulatory", title:"FDA lets WHOOP market Blood Pressure Insights as a wellness feature",
+      sum:"FDA allowed the feature as a wellness tool, reversing its 2025 position that it was a device needing review.",
+      so:"Blood pressure trends are now in play for non-cleared wearables. Differentiation shifts to accuracy evidence and clinical workflow, not the metric itself.",
+      url:"https://pratt.duke.edu/news/wearables-fda-guidance/", src:"Duke Pratt School of Engineering" },
+    { d:"2026-01-06", co:"FDA / CMS", type:"Regulatory", title:"FDA finalizes updated general wellness and clinical decision support guidance",
+      sum:"Non-invasive wearables reporting metrics such as blood pressure, oxygen saturation or glucose-related signals can stay under wellness policy if claims avoid disease.",
+      so:"Lowers the bar for consumer features across all competitors. Claims language becomes the line between wellness and device, so marketing review matters more.",
+      url:"https://www.foley.com/insights/publications/2026/01/digital-health-policy-fda-relaxes-restrictions-over-wearables-and-ai-decision-ma/", src:"Foley & Lardner" },
+    { d:"2026-01-01", co:"FDA / CMS", type:"Reimbursement", title:"New RPM codes 99445 and 99470 take effect",
+      sum:"Medicare now pays for device supply with 2 to 15 days of readings (99445) and for 10 to 19 minutes of management (99470).",
+      so:"Short, episodic monitoring is now billable. Consumer wearables that patients wear inconsistently become easier to fit into RPM programs.",
+      url:"https://blog.prevounce.com/how-cpt-99445-and-99470-support-expanded-rpm-care-models-in-2026", src:"Prevounce" },
+    { d:"2025-09-15", co:"Apple", type:"Regulatory", title:"FDA clears hypertension notifications on Apple Watch",
+      sum:"Apple Watch can notify users of patterns consistent with possible hypertension, using passive optical heart sensor data.",
+      so:"Moves Apple into a high-prevalence cardiometabolic condition with a cleared feature. Expect it in payer and employer conversations.",
+      url:"", src:"Apple announcement" },
+    { d:"2025-07-14", co:"WHOOP", type:"Regulatory", title:"FDA warning letter over WHOOP Blood Pressure Insights",
+      sum:"FDA said the feature was marketed without clearance, citing daily blood pressure estimates and 'medical grade' language.",
+      so:"A live example of claims risk. Our messaging should stay inside cleared indications or wellness language.",
+      url:"https://www.womblebonddickinson.com/us/node/21048", src:"Womble Bond Dickinson" },
+    { d:"2024-09-12", co:"Apple", type:"Regulatory", title:"FDA authorizes hearing aid software feature for AirPods Pro 2",
+      sum:"First over-the-counter hearing aid software on a consumer earbud.",
+      so:"Shows Apple's pattern: turn a mass-market device into a regulated health product through software.",
+      url:"", src:"Apple and FDA announcements" },
+    { d:"2024-06-10", co:"Abbott", type:"Regulatory", title:"FDA clears Lingo over-the-counter glucose biosensor",
+      sum:"Abbott's consumer CGM for people not on insulin, sold without a prescription.",
+      so:"Glucose joins the consumer wellness stack. Partnerships with CGM makers become a route to metabolic health use cases.",
+      url:"", src:"Abbott announcement" },
+    { d:"2024-03-05", co:"Dexcom", type:"Regulatory", title:"FDA clears Stelo, the first over-the-counter CGM",
+      sum:"Stelo is cleared for adults with type 2 diabetes not on insulin, without a prescription.",
+      so:"Dexcom is moving from prescription channels to consumers, and integrates with third-party wearables data.",
+      url:"", src:"Dexcom and FDA announcements" },
+    { d:"2024-02-09", co:"Samsung", type:"Regulatory", title:"FDA authorizes sleep apnea feature on Galaxy Watch",
+      sum:"De Novo authorization for detecting signs of moderate to severe obstructive sleep apnea.",
+      so:"Samsung has a cleared sleep feature on Android, the platform where our own reach is largest.",
+      url:"", src:"Samsung announcement" }
+  ];
+
+  const CARDS = {
+    Apple: { pos:"Mass-market smartwatch with a growing set of FDA-cleared features.",
+      str:["Largest installed base among US smartwatch owners","Cleared ECG, AFib history, hypertension notifications","Deep research brand from large virtual studies"],
+      gaps:["iPhone only, which excludes most Android patients","Limited enterprise tooling for care teams","Premium price limits use in Medicaid populations"],
+      win:"Lead with cross-platform reach and price range for population programs. Ask buyers how they will cover Android patients.", q:"What share of your patients use Android?" },
+    Samsung: { pos:"Android flagship wearables with cleared sleep and heart features.",
+      str:["Cleared sleep apnea feature","Strong Android distribution and carrier channels","Ring and watch form factors"],
+      gaps:["Clinical programs and care team tools are early","Features vary by phone brand and region"],
+      win:"Compete on clinical workflow, data integration and evidence, not on sensor lists.", q:"Who on your team reviews the data, and in which system?" },
+    Oura: { pos:"Ring form factor focused on sleep, readiness and women's health.",
+      str:["High wear time and comfort overnight","Strong consumer brand and subscription model","Partnerships across employers and CGM makers"],
+      gaps:["No screen, so limited in-the-moment engagement","Mostly wellness positioning, few cleared claims","Subscription cost on top of hardware"],
+      win:"Position for programs that need daytime activity and notifications plus sleep, with no separate subscription.", q:"Do you need patients to act on prompts during the day?" },
+    WHOOP: { pos:"Performance and longevity band sold as a membership.",
+      str:["Loyal performance audience","Fast feature cadence, including blood pressure trends","Clear subscription economics"],
+      gaps:["Regulatory friction on medical-sounding claims in 2025","Narrow audience for clinical populations","No display"],
+      win:"Win on clinical credibility and regulatory discipline. Use the 2025 warning letter as a reason buyers should ask about claims review.", q:"How will you validate metrics before using them in care?" },
+    Dexcom: { pos:"CGM leader extending into over-the-counter consumer glucose.",
+      str:["Clinical-grade glucose data and payer coverage","Stelo opens the consumer channel","Deep endocrinology relationships"],
+      gaps:["Single biomarker; relies on partners for activity and sleep","Sensor replacement costs"],
+      win:"Treat as a partner more than a rival: combined glucose, activity and sleep data makes a stronger metabolic program.", q:"Would a combined CGM and wearable view help your diabetes program?" },
+    Abbott: { pos:"Libre CGM scale leader with the Lingo consumer biosensor.",
+      str:["Largest CGM user base worldwide","Low-cost sensors","Strong hospital and cardiology relationships"],
+      gaps:["Consumer app ecosystem is young","Glucose-centric; limited broader wearable data"],
+      win:"Same as Dexcom: lead with integration and a combined metabolic view.", q:"Which CGM do your patients already use?" }
+  };
+  // Analyst view: x 0 = consumer wellness, 1 = clinical grade; y 0 = single device, 1 = care platform
+  const MAP = { Apple:[0.62,0.72], Samsung:[0.5,0.48], Oura:[0.28,0.55], WHOOP:[0.18,0.38], Dexcom:[0.86,0.42], Abbott:[0.8,0.3] };
+
+  // Brighter brand colors for the dark theme, and illustrative product images
+  Object.assign(COMPANIES.Apple, { color: "#94A3B8", img: "watch" });
+  Object.assign(COMPANIES.Samsung, { color: "#3B82F6", img: "round-watch" });
+  Object.assign(COMPANIES.Oura, { color: "#E0A93B", img: "ring" });
+  Object.assign(COMPANIES.WHOOP, { color: "#EF4444", img: "band" });
+  Object.assign(COMPANIES.Dexcom, { color: "#22C55E", img: "cgm-arm" });
+  Object.assign(COMPANIES.Abbott, { color: "#14B8A6", img: "cgm-disc" });
+  COMPANIES["FDA / CMS"].color = "#A78BFA";
+  MAP.Abbott = [0.74, 0.24]; // nudged from [0.8, 0.3] so it does not cover Dexcom on the map
+  const PARTNERS = new Set(["Dexcom", "Abbott"]);
+  const IMG_ALT = { watch: "square smartwatch", "round-watch": "round smartwatch", ring: "smart ring", band: "screenless fitness band", "cgm-arm": "glucose sensor worn on the arm", "cgm-disc": "glucose biosensor with phone app" };
+  const tagStyle = c => `background:${c}2e;color:${c}`;
+
+  // ---------- State ----------
+  let tab = "feed", query = "", coSel = new Set(Object.keys(COMPANIES)), typeSel = new Set(TYPES), briefDays = 90;
+  const fmtD = d => new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  const visible = () => EVENTS.filter(e => coSel.has(e.co) && typeSel.has(e.type) && (!query || (e.title + " " + e.sum + " " + e.so + " " + e.co).toLowerCase().includes(query))).sort((a, b) => b.d.localeCompare(a.d));
+  const daysAgo = d => (TODAY - new Date(d + "T00:00:00")) / 864e5;
+
+  function renderFilters() {
+    const cnt = (k, v) => EVENTS.filter(e => e[k] === v).length;
+    $("#f-co").innerHTML = Object.keys(COMPANIES).map(c => { const col = COMPANIES[c].color; return `<label class="chip" style="${tagStyle(col)}"><input type="checkbox" data-co="${esc(c)}" ${coSel.has(c) ? "checked" : ""}>${esc(c)} <span class="n">${cnt("co", c)}</span></label>`; }).join("");
+    $("#f-type").innerHTML = TYPES.map(t => `<label class="chip tag neutral"><input type="checkbox" data-type="${t}" ${typeSel.has(t) ? "checked" : ""}>${t} <span class="n">${cnt("type", t)}</span></label>`).join("");
+  }
+  function renderKpis() {
+    const reg = EVENTS.filter(e => e.type === "Regulatory" && e.co !== "FDA / CMS").length;
+    $("#kpis").innerHTML = [
+      [EVENTS.length, "Updates tracked", `${Object.keys(COMPANIES).length - 1} competitors plus regulators`],
+      [reg, "Competitor FDA actions", "Clearances, authorizations, warning letters"],
+      [EVENTS.filter(e => e.co === "FDA / CMS").length, "Policy changes", "FDA guidance and CMS payment rules"]
+    ].map(([v, l, s]) => `<div class="kpi"><div class="value">${v}</div><div class="label">${l}</div><div class="sub">${esc(s)}</div></div>`).join("");
+    $("#asof").textContent = "As of " + TODAY.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  function viewFeed() {
+    const list = visible();
+    if (!list.length) return `<h2 class="section-title">Latest updates</h2><p class="empty">No updates match these filters.</p>`;
+    return `<h2 class="section-title">Latest updates <span class="tag neutral">${list.length}</span></h2><div class="feed">${list.map(e => { const col = COMPANIES[e.co].color; return `
+      <article class="card update">
+        <div class="meta"><span class="tag" style="${tagStyle(col)}">${esc(e.co)}</span><span class="tag neutral">${e.type}</span><span class="date">${fmtD(e.d)}</span></div>
+        <h3>${esc(e.title)}</h3>
+        ${e.sum ? `<p class="sum">${esc(e.sum)}</p>` : ""}
+        <div class="why"><b>Why it matters</b>${esc(e.so)}</div>
+        <p class="src">Source: ${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.src)}</a>` : `${esc(e.src)}<span class="warn-tag">Add link</span>`}</p>
+      </article>`; }).join("")}</div>`;
+  }
+  function viewCards() {
+    const cos = Object.keys(CARDS).filter(c => coSel.has(c));
+    if (!cos.length) return `<h2 class="section-title">Battlecards</h2><p class="empty">Select at least one competitor.</p>`;
+    return `<h2 class="section-title">Battlecards</h2><div class="cards">${cos.map(c => { const k = CARDS[c], col = COMPANIES[c].color, n = EVENTS.filter(e => e.co === c).sort((a, b) => b.d.localeCompare(a.d))[0]; return `
+      <article class="card bc">
+        <div class="bc-img"><img src="img/${COMPANIES[c].img}.jpg" width="900" height="506" loading="lazy" alt="Illustrative ${IMG_ALT[COMPANIES[c].img]}"></div>
+        <div class="bc-body">
+          <div class="bc-title"><h3>${c}</h3><span class="tag" style="${tagStyle(col)}">${PARTNERS.has(c) ? "Partner more than rival" : "Competitor"}</span></div>
+          <p class="bc-pos">${esc(k.pos)}</p>
+          <div class="box str"><b>Strengths</b><ul>${k.str.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+          <div class="box gap"><b>Gaps</b><ul>${k.gaps.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+          <div class="box win"><b>How to win</b>${esc(k.win)}</div>
+          <div class="box ask" style="background:${col}24"><b style="color:${col}">Ask the buyer</b>“${esc(k.q)}”</div>
+          ${n ? `<p class="latest">Latest move · ${fmtD(n.d)}: ${esc(n.title)}</p>` : ""}
+        </div>
+      </article>`; }).join("")}</div>`;
+  }
+  function viewMap() {
+    const X = v => 6 + v * 88, Y = v => 94 - v * 88;
+    const pts = Object.entries(MAP).filter(([c]) => coSel.has(c)).map(([c, [x, y]]) => { const col = COMPANIES[c].color; return `
+      <div class="pt" style="left:${X(x)}%;top:${Y(y)}%"><div class="th" style="border-color:${col}"><img src="img/${COMPANIES[c].img}.jpg" width="900" height="506" alt=""></div><span>${c}</span></div>`; }).join("");
+    return `<h2 class="section-title">Positioning map <span class="tag neutral">Analyst view</span></h2>
+      <div class="card map-card"><p class="map-note">Where each player's health offer sits today. Nobody yet combines clinical-grade evidence with a care team platform that works across Android and iOS.</p>
+      <div class="plot" role="img" aria-label="Positioning map: ${Object.entries(MAP).map(([c, [x, y]]) => `${c} ${x < .5 ? "consumer wellness" : "clinical grade"}, ${y < .5 ? "single device" : "care platform"}`).join("; ")}. Open space: clinical-grade care platform.">
+        <div class="axis-v"></div><div class="axis-h"></div>
+        <span class="quad" style="left:3%;top:4%">Wellness ecosystems</span><span class="quad" style="left:3%;bottom:4%">Lifestyle devices</span><span class="quad" style="right:3%;bottom:4%">Clinical sensors</span>
+        <div class="open"><strong>Open space</strong><span>Clinical-grade care platform<span class="long">: nobody owns it yet</span></span></div>
+        <span class="lab" style="left:calc(50% + 10px);top:2%">Care platform ↑</span><span class="lab" style="left:calc(50% + 10px);bottom:2%">Single device ↓</span>
+        ${pts}
+      </div><div class="xaxis"><span>← Consumer wellness</span><span>Clinical grade →</span></div></div>`;
+  }
+  function briefText() {
+    const all = briefDays >= 1000;
+    const list = EVENTS.filter(e => (all || daysAgo(e.d) <= briefDays) && coSel.has(e.co)).sort((a, b) => b.d.localeCompare(a.d));
+    if (!list.length) return all ? "No tracked updates." : `No tracked updates in the last ${briefDays} days.`;
+    let t = `Competitive brief: consumer health wearables\nPeriod: ${all ? "all tracked updates" : `last ${briefDays} days`} to ${TODAY.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}\n\n`;
+    t += `Headline: ${list.length} update${list.length > 1 ? "s" : ""} across ${[...new Set(list.map(e => e.co))].join(", ")}.\n`;
+    TYPES.forEach(ty => { const g = list.filter(e => e.type === ty); if (!g.length) return; t += `\n${ty}\n`; g.forEach(e => t += `- ${e.co}, ${fmtD(e.d)}: ${e.title}.\n  So what: ${e.so}\n`); });
+    t += `\nRecommended focus: keep claims inside cleared or wellness language, and lead with care team workflow and cross-platform reach.`;
+    return t;
+  }
+  function viewBrief() {
+    return `<h2 class="section-title">Leadership brief</h2><div class="card brief"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="seg" role="group" aria-label="Period">${[30, 90, 365, 1000].map(d => `<button data-days="${d}" aria-pressed="${d === briefDays}">${d === 1000 ? "All time" : d === 365 ? "12 months" : d + " days"}</button>`).join("")}</div>
+      <button id="copybrief" class="btn primary">Copy brief</button></div>
+      <pre id="brieftext">${esc(briefText())}</pre></div>`;
+  }
+  const setTab = t => { tab = t; document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t)); };
+  function render() {
+    renderKpis();
+    $("#view").innerHTML = { feed: viewFeed, cards: viewCards, map: viewMap, brief: viewBrief }[tab]();
+  }
+
+  // ---------- Events ----------
+  document.addEventListener("change", e => {
+    const c = e.target.dataset.co, t = e.target.dataset.type;
+    if (c) { e.target.checked ? coSel.add(c) : coSel.delete(c); render(); }
+    if (t) { e.target.checked ? typeSel.add(t) : typeSel.delete(t); render(); }
+  });
+  $("#q").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); if (tab !== "feed") setTab("feed"); render(); });
+  document.addEventListener("click", async e => {
+    const tb = e.target.closest("[data-tab]"); if (tb) { setTab(tb.dataset.tab); render(); return; }
+    const d = e.target.closest("[data-days]"); if (d) { briefDays = +d.dataset.days; render(); return; }
+    if (e.target.closest("#copybrief")) { try { await navigator.clipboard.writeText(briefText()); toast("Brief copied"); } catch { toast("Copy isn't allowed here. Select the text instead."); } return; }
+    if (e.target.closest("#add")) { $("#n-date").value = TODAY.toISOString().slice(0, 10); $("#dlg").showModal(); return; }
+    if (e.target.closest("#cancel")) $("#dlg").close();
+  });
+  $("#n-co").innerHTML = Object.keys(COMPANIES).map(c => `<option>${esc(c)}</option>`).join("");
+  $("#n-type").innerHTML = TYPES.map(t => `<option>${t}</option>`).join("");
+  $("#addform").addEventListener("submit", e => {
+    e.preventDefault();
+    const url = $("#n-url").value.trim();
+    let src = "Added by you";
+    if (url) { try { src = new URL(/^https?:/.test(url) ? url : "https://" + url).hostname; } catch { src = "Added by you"; } }
+    EVENTS.push({ d: $("#n-date").value, co: $("#n-co").value, type: $("#n-type").value, title: $("#n-title").value.trim(), sum: $("#n-sum").value.trim(), so: $("#n-so").value.trim() || "Add the so-what for our team.", url: /^https?:\/\//.test(url) ? url : "", src });
+    $("#dlg").close(); e.target.reset(); renderFilters(); setTab("feed"); render(); toast("Update added");
+  });
+  renderFilters(); render();
+})();
+</script>
+</body>
+</html>
